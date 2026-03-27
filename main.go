@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -25,6 +26,13 @@ func main() {
 
 	// 加载配置（优先读取 config.json）
 	cfg := config.Load()
+
+	// 提示密码信息
+	if os.Getenv("WEBUI_PASSWORD") == "" {
+		log.Printf("[main] WebUI 使用默认密码: %s（可通过环境变量 WEBUI_PASSWORD 自定义）", config.DefaultPassword)
+	} else {
+		log.Println("[main] WebUI 密码已通过环境变量 WEBUI_PASSWORD 设置")
+	}
 
 	// 初始化存储
 	store, err := storage.New(cfg.DBPath)

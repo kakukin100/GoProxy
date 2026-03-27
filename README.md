@@ -176,18 +176,22 @@ docker compose up -d --build
 
 ### 登录密码说明
 
-当前版本在代码里只保存了 WebUI 密码的 SHA256 哈希值，默认明文密码没有在仓库中说明，也不能通过 `config.json` 或 WebUI 修改。
+默认密码为 `proxygo`，程序启动时会在日志中提示。
 
-如果你要自定义密码，当前可行方式是：
-
-1. 生成密码的 SHA256
-2. 修改 `config/config.go` 中的 `WebUIPasswordHash`
-3. 重新构建并启动程序
-
-例如生成 SHA256：
+可通过环境变量 `WEBUI_PASSWORD` 自定义密码：
 
 ```bash
-printf 'your-password' | shasum -a 256
+# 本地运行
+WEBUI_PASSWORD=your-password go run .
+
+# Docker
+docker run -e WEBUI_PASSWORD=your-password ...
+```
+
+也可以在 `docker-compose.yml` 的 `environment` 中添加：
+
+```yaml
+- WEBUI_PASSWORD=your-password
 ```
 
 ## API 概览

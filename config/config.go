@@ -1,10 +1,14 @@
 package config
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 )
+
+const DefaultPassword = "proxygo"
 
 func dataDir() string {
 	if d := os.Getenv("DATA_DIR"); d != "" {
@@ -63,10 +67,19 @@ var (
 	cfgMu     sync.RWMutex
 )
 
+func passwordHash(plain string) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(plain)))
+}
+
 func DefaultConfig() *Config {
+	// 优先从环境变量 WEBUI_PASSWORD 读取密码，未设置时使用默认密码
+	password := os.Getenv("WEBUI_PASSWORD")
+	if password == "" {
+		password = DefaultPassword
+	}
 	return &Config{
 		WebUIPort:           ":7778",
-		WebUIPasswordHash:   "64c2de42ff93286f5c7108867ffe3167a24f4c1abee648dea7bc7fa1d11e2b21",
+		WebUIPasswordHash:   passwordHash(password),
 		ProxyPort:           ":7777",
 		DBPath:              dataDir() + "proxy.db",
 		ValidateConcurrency: 300,

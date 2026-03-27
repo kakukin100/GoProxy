@@ -11,6 +11,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - DATA_DIR=/app/data
+      # - WEBUI_PASSWORD=your-password  # 自定义 WebUI 登录密码，默认: proxygo
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:7778/"]
       interval: 30s
